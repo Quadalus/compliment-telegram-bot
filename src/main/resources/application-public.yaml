@@ -1,0 +1,17 @@
+server:
+  port: 8080
+
+bot:
+  name: BikkulGoodMorningBot
+  token: 6684537511:AAGFVDBQ0ZRdlwajiS5Gn2Y49hri5FBdJLI
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/good_morning_wishes_db
+    username: quadalus
+    password: pollka78
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
