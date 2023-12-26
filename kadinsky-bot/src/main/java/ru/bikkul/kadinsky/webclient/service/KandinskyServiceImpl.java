@@ -1,9 +1,9 @@
 package ru.bikkul.kadinsky.webclient.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import ru.bikkul.kadinsky.webclient.client.KadinskyClient;
 import ru.bikkul.kadinsky.webclient.common.DefaultStyles;
@@ -13,11 +13,8 @@ import ru.bikkul.kadinsky.webclient.dto.GenerationPictureRequestDto;
 import ru.bikkul.kadinsky.webclient.dto.ResutPictureResponseDto;
 import ru.bikkul.kadinsky.webclient.mapper.GenerationPictureMapperDto;
 
-import java.io.File;
-import java.io.IOException;
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
@@ -45,33 +42,25 @@ public class KandinskyServiceImpl implements KandinskyService {
     }
 
     @Override
+    @Async
     public ResutPictureResponseDto generatePicture(Long chatId) {
-        String style = getRandomStyle();
-        String randomText = generateRandomText(style);
+        var style = getRandomStyle();
+        var randomText = generateRandomText(style);
         log.info("random text is:{} | style:{}", randomText, style);
         GenerationPictureRequestDto generatePictureDto = new GenerationPictureRequestDto(style, randomText);
         var fullResponseDto = GenerationPictureMapperDto.toFullDto(kadinskyClient.generatePicture(generatePictureDto), chatId);
         var statusPicture = getStatusPicture(fullResponseDto.uuid());
         statusPicture.setChatId(chatId);
+        log.info("picture to chat:{} has been generate", chatId);
         return statusPicture;
     }
+
 
     private ResutPictureResponseDto getStatusPicture(String uuid) {
         var resutPictureDto = kadinskyClient.checkGenerateStatus(uuid);
         String status = resutPictureDto.getStatus();
 
         resutPictureDto = getResultPictureWithStatusDone(uuid, status, resutPictureDto);
-        var images = resutPictureDto.getImages();
-        if (!(images == null) && !images.isEmpty()) {
-            var s = images.get(0);
-            byte[] decodedBytes = Base64.getDecoder().decode(s);
-            try {
-                FileUtils.writeByteArrayToFile(new File("src/main/resources/img/picture%d.jpg"
-                        .formatted(ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE))), decodedBytes);
-            } catch (IOException e) {
-                log.error("error");
-            }
-        }
         return resutPictureDto;
     }
 

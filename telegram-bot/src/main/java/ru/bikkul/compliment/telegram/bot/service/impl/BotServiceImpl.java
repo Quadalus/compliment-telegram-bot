@@ -1,22 +1,31 @@
 package ru.bikkul.compliment.telegram.bot.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import ru.bikkul.compliment.telegram.bot.client.GeneratePictureClient;
 import ru.bikkul.compliment.telegram.bot.config.BotConfig;
 import ru.bikkul.compliment.telegram.bot.model.GoodMorning;
 import ru.bikkul.compliment.telegram.bot.repository.GoodMorningRepository;
 import ru.bikkul.compliment.telegram.bot.service.BotService;
 import ru.bikkul.compliment.telegram.bot.util.quartz.TelegramScheduler;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
@@ -30,6 +39,7 @@ public class BotServiceImpl extends TelegramLongPollingBot implements BotService
     private final GoodMorningRepository goodMorningRepository;
     private final List<BotCommand> botCommands = new ArrayList<>();
     private final Queue<String> commandCallbacks = new ArrayDeque<>();
+    private final GeneratePictureClient generatePictureClient;
     private List<GoodMorning> wishes;
 
     {
@@ -46,11 +56,12 @@ public class BotServiceImpl extends TelegramLongPollingBot implements BotService
     }
 
     @Autowired
-    public BotServiceImpl(TelegramScheduler telegramScheduler, BotConfig botConfig, GoodMorningRepository goodMorningRepository) {
+    public BotServiceImpl(TelegramScheduler telegramScheduler, BotConfig botConfig, GoodMorningRepository goodMorningRepository, GeneratePictureClient generatePictureClient) {
         super(botConfig.getBotToken());
         this.telegramScheduler = telegramScheduler;
         this.botConfig = botConfig;
         this.goodMorningRepository = goodMorningRepository;
+        this.generatePictureClient = generatePictureClient;
         fillPozdravokWishes();
     }
 
@@ -94,6 +105,7 @@ public class BotServiceImpl extends TelegramLongPollingBot implements BotService
     }
 
     @Override
+    @Async
     public void sendRandomWish(long chatId) {
         var wish = getRandomWish();
         sendMessage(chatId, wish);
@@ -137,6 +149,47 @@ public class BotServiceImpl extends TelegramLongPollingBot implements BotService
     @Override
     public void onRegister() {
         super.onRegister();
+    }
+
+    @Override
+    @Async
+    public void sendRandomPicture(long chatId) {
+        var url = "telegram-bot/src/main/resources/img/%d-%d.png"
+                .formatted(chatId, ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE));
+        var picture = getPicture(chatId, url);
+        var caption = getRandomWish();
+        var photo = new SendPhoto();
+        photo.setChatId(chatId);
+        photo.setCaption(caption);
+        photo.setPhoto(new InputFile(picture));
+        sendPhoto(photo);
+        log.info("Пожелание с добрым утром отправлено пользователю:{}", chatId);
+        deleteFile(url);
+    }
+
+    private static void deleteFile(String url) {
+        try {
+            Files.deleteIfExists(Path.of(url));
+        } catch (IOException e) {
+            log.error("file with url:{}, not exists", url);
+        }
+    }
+
+    private File getPicture(long chatId, String url) {
+        var resutPictureDto = generatePictureClient.generatePicture(chatId);
+
+        var images = resutPictureDto.getImages();
+
+        if (!(images == null) && !images.isEmpty()) {
+            var s = images.get(0);
+            byte[] decodedBytes = Base64.getDecoder().decode(s);
+            try {
+                FileUtils.writeByteArrayToFile(new File(url), decodedBytes);
+            } catch (IOException e) {
+                log.error("error");
+            }
+        }
+        return FileUtils.getFile(url);
     }
 
     private void startSendingWishes(Message message) {
@@ -190,6 +243,14 @@ public class BotServiceImpl extends TelegramLongPollingBot implements BotService
         SendMessage msg = new SendMessage(String.valueOf(chatId), textToSend);
         try {
             execute(msg);
+        } catch (TelegramApiException e) {
+            log.error("error from sending message, error msg:{}", e.getMessage());
+        }
+    }
+
+    private void sendPhoto(SendPhoto photo) {
+        try {
+            execute(photo);
         } catch (TelegramApiException e) {
             log.error("error from sending message, error msg:{}", e.getMessage());
         }

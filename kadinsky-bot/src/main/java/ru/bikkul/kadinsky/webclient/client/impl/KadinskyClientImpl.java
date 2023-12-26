@@ -7,14 +7,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.util.retry.Retry;
 import ru.bikkul.kadinsky.webclient.client.KadinskyClient;
 import ru.bikkul.kadinsky.webclient.dto.GenerationPictureRequestDto;
 import ru.bikkul.kadinsky.webclient.dto.GenerationPictureResponseDto;
 import ru.bikkul.kadinsky.webclient.dto.ResutPictureResponseDto;
 
+import java.time.Duration;
+
 @Component
 public class KadinskyClientImpl implements KadinskyClient {
-    public static final int BUFFER_SIZE = 10485760;
     private final WebClient webClient;
     private final String GENERATE_PATH;
     private final String STATUS_PATH;
@@ -25,7 +27,8 @@ public class KadinskyClientImpl implements KadinskyClient {
                               @Value("${kandinsky.api.endpoint.url}") String url,
                               @Value("${kandinsky.api.endpoint.generate_path}") String generatePath,
                               @Value("${kandinsky.api.endpoint.status_path}") String statusPath,
-                              @Value("${kandinsky.api.endpoint.service_available_path}") String serviceAvailablePath) {
+                              @Value("${kandinsky.api.endpoint.service_available_path}") String serviceAvailablePath,
+                              @Value("${kandinsky.api.client.buffer_size}") int bufferSize) {
         this.GENERATE_PATH = generatePath;
         this.STATUS_PATH = statusPath;
         this.SERVICE_AVAILABLE_PATH = serviceAvailablePath;
@@ -37,7 +40,7 @@ public class KadinskyClientImpl implements KadinskyClient {
                 .defaultHeader("X-Key", key)
                 .defaultHeader("X-Secret", secret)
                 .exchangeStrategies(ExchangeStrategies.builder()
-                        .codecs(codec -> codec.defaultCodecs().maxInMemorySize(BUFFER_SIZE)).build())
+                        .codecs(codec -> codec.defaultCodecs().maxInMemorySize(bufferSize)).build())
                 .build();
     }
 
@@ -56,6 +59,7 @@ public class KadinskyClientImpl implements KadinskyClient {
                 .body(BodyInserters.fromMultipartData(builder.build()))
                 .retrieve()
                 .bodyToMono(GenerationPictureResponseDto.class)
+                .retryWhen(Retry.fixedDelay(3, Duration.ofMillis(3500)))
                 .block();
     }
 

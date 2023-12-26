@@ -4,4 +4,6 @@ public interface BotService {
     void sendMessage(long chatId);
 
     void sendRandomWish(long chatId);
+
+    void sendRandomPicture(long chatId);
 }

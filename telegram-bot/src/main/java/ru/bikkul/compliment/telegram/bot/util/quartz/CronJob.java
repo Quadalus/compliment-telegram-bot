@@ -13,6 +13,6 @@ public class CronJob implements Job {
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         long chatId = jobExecutionContext.getJobDetail().getJobDataMap().getLongValue("chatId");
-        botService.sendRandomWish(chatId);
+        botService.sendRandomPicture(chatId);
     }
 }
