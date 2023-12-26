@@ -1,4 +1,4 @@
-package ru.bikkul.compliment.telegram.bot.mapper;
+package ru.bikkul.compliment.telegram.bot.util.mapper;
 
 import org.springframework.lang.NonNull;
 import ru.bikkul.compliment.telegram.bot.dto.GoodMorningDto;

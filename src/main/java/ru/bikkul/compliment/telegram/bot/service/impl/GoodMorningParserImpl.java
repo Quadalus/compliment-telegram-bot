@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.bikkul.compliment.telegram.bot.dto.GoodMorningDto;
 import ru.bikkul.compliment.telegram.bot.exception.UniqueConstraintException;
-import ru.bikkul.compliment.telegram.bot.mapper.GoodMorningDtoMapper;
 import ru.bikkul.compliment.telegram.bot.model.GoodMorning;
 import ru.bikkul.compliment.telegram.bot.repository.GoodMorningRepository;
 import ru.bikkul.compliment.telegram.bot.service.WishesParserService;
+import ru.bikkul.compliment.telegram.bot.util.mapper.GoodMorningDtoMapper;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -26,9 +26,10 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class GoodMorningParserImpl implements WishesParserService {
-    private final GoodMorningRepository goodMorningRepository;
     private final String DEFAULT_SOURCE = "pozdravok.com";
+    private final GoodMorningRepository goodMorningRepository;
     private final List<GoodMorningDto> wishes = new ArrayList<>();
+
 
     @Override
     @Transactional

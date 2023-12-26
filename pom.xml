@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.2</version>
+        <version>3.2.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>ru.bikkul</groupId>
@@ -19,10 +19,10 @@
         <maven.copiler>17</maven.copiler>
         <telegrambots-spring-boot-starter.version>6.7.0</telegrambots-spring-boot-starter.version>
         <jsoup.version>1.15.3</jsoup.version>
-        <spring.boot.version>3.1.2</spring.boot.version>
+        <spring.boot.version>3.2.1</spring.boot.version>
         <jakarta.api.version>6.1.0-M1</jakarta.api.version>
         <jakarta.annotation-api.version>3.0.0-M1</jakarta.annotation-api.version>
-        <liquibase-core.version>4.23.0</liquibase-core.version>
+        <liquibase-core.version>4.25.1</liquibase-core.version>
         <postgresql.version>42.7.1</postgresql.version>
     </properties>
 
