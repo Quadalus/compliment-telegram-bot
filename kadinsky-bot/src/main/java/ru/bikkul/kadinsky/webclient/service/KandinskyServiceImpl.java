@@ -17,6 +17,7 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -43,18 +44,21 @@ public class KandinskyServiceImpl implements KandinskyService {
 
     @Override
     @Async
-    public ResutPictureResponseDto generatePicture(Long chatId) {
-        var style = getRandomStyle();
-        var randomText = generateRandomText(style);
-        log.info("random text is:{} | style:{}", randomText, style);
-        GenerationPictureRequestDto generatePictureDto = new GenerationPictureRequestDto(style, randomText);
+    public CompletableFuture<ResutPictureResponseDto> generatePicture(Long chatId) {
+        GenerationPictureRequestDto generatePictureDto = generationData();
         var fullResponseDto = GenerationPictureMapperDto.toFullDto(kadinskyClient.generatePicture(generatePictureDto), chatId);
         var statusPicture = getStatusPicture(fullResponseDto.uuid());
         statusPicture.setChatId(chatId);
         log.info("picture to chat:{} has been generate", chatId);
-        return statusPicture;
+        return CompletableFuture.completedFuture(statusPicture);
     }
 
+    private GenerationPictureRequestDto generationData() {
+        var style = getRandomStyle();
+        var randomText = generateRandomText(style);
+        log.info("random text is:{} | style:{}", randomText, style);
+        return new GenerationPictureRequestDto(style, randomText);
+    }
 
     private ResutPictureResponseDto getStatusPicture(String uuid) {
         var resutPictureDto = kadinskyClient.checkGenerateStatus(uuid);
@@ -66,6 +70,7 @@ public class KandinskyServiceImpl implements KandinskyService {
 
     private ResutPictureResponseDto getResultPictureWithStatusDone(String uuid, String status, ResutPictureResponseDto resutPictureDto) {
         boolean condition = checkStatus(status);
+
         while (condition) {
             resutPictureDto = kadinskyClient.checkGenerateStatus(uuid);
             status = resutPictureDto.getStatus();
@@ -87,8 +92,9 @@ public class KandinskyServiceImpl implements KandinskyService {
     }
 
     private String getRandomStyle() {
-        double randomRatio = 2.4;
-        int random = ThreadLocalRandom.current().nextInt((int) ((styles.size() - 1) * randomRatio));
+        var randomRatio = 2.4;
+        var random = ThreadLocalRandom.current().nextInt((int) ((styles.size() - 1) * randomRatio));
+
         return switch (random) {
             case 1 -> styles.get(1);
             case 2 -> styles.get(2);
@@ -98,11 +104,11 @@ public class KandinskyServiceImpl implements KandinskyService {
     }
 
     private String generateRandomText(String style) {
-        StringBuilder sb = new StringBuilder("утро");
-        String other = getOther();
-        String location = getLocation(other);
-        String weather = getWeather();
-        String otherWater = getOtherWater(location);
+        var sb = new StringBuilder("утро");
+        var other = getOther();
+        var location = getLocation(other);
+        var weather = getWeather();
+        var otherWater = getOtherWater(location);
         checkStrIsNotBlank(other, sb);
         checkStrIsNotBlank(location, sb);
         checkStrIsNotBlank(weather, sb);
@@ -119,7 +125,7 @@ public class KandinskyServiceImpl implements KandinskyService {
     }
 
     private String getRandomDefaultStyle() {
-        int random = ThreadLocalRandom.current().nextInt(defaultStyles.size());
+        var random = ThreadLocalRandom.current().nextInt(defaultStyles.size());
         return defaultStyles.get(random);
     }
 

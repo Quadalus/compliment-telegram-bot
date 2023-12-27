@@ -9,11 +9,16 @@ public enum DefaultStyles {
     MALEVICH("малевича"),
     AIVAZOVSKY("айвазовского"),
     PORTRAIT_PHOTO("портретного фото"),
-    PIXEL("пиксель арт"),
+    PIXEL("пиксель арта"),
     CLASSICISM("классицизма"),
     DIGITAL("цифровой живописи"),
     CARTON("мультфильма"),
-    WATER_COLOUR("акварели");
+    WATER_COLOUR("акварели"),
+    REPIN("репина"),
+    VAN_GOG("ван гога"),
+    JAPAN("японской гравюры"),
+    MINIMALISM("минимализма"),
+    POP_ART("поп арта");
     
     private final String defaultStyle;
 
