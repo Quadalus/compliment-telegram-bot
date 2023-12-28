@@ -8,7 +8,6 @@ CREATE TABLE IF NOT EXISTS good_morning_wishes
 );
 --rollback DROP TABLE good_morning_wishes;
 
-
 --changeset quadalus:2
 CREATE TABLE IF NOT EXISTS telegram_user
 (
@@ -18,3 +17,16 @@ CREATE TABLE IF NOT EXISTS telegram_user
     last_name  VARCHAR NOT NULL
 );
 --rollback DROP TABLE good_morning_wishes;
+
+--changeset quadalus:3
+CREATE TABLE IF NOT EXISTS user_settings
+(
+    chat_id       BIGINT PRIMARY KEY,
+    is_scheduled  BOOLEAN      NOT NULL DEFAULT FALSE,
+    cron_time     VARCHAR(15)  NOT NULL DEFAULT '0 0 8 ? * * *',
+    source_type   VARCHAR(20)  NOT NULL DEFAULT 'AI',
+    text_param    VARCHAR(255) NOT NULL DEFAULT 'default',
+    picture_param VARCHAR(255) NOT NULL DEFAULT 'default',
+    CONSTRAINT fk_user FOREIGN KEY (chat_id) REFERENCES telegram_user (chat_id) ON DELETE SET NULL
+);
+--rollback DROP TABLE user_settings;
