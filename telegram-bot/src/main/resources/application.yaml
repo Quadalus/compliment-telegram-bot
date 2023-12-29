@@ -2,24 +2,25 @@ server:
   port: 8080
 
 bot:
-  name:
-  token:
+  name: BikkulGoodMorningBot
+  token: 6684537511:AAEpUeDlsCM9zzzz7wwgKR7eoDoK4Zib1Lw
 
   api:
-    kandinsky:
+     kandinsky:
       endpoint:
-        base_url: http://localhost:9090
+        base_url: ${KANDINSKY_SERVER_HOST}
         generate_path: /generate/
 
       client:
         buffer_size: 5242880
 
+
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/public_db
-    username:
-    password:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USER}
+    password: ${SPRING_DATASOURCE_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: none

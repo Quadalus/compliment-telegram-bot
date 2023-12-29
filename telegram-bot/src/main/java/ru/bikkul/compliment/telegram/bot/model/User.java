@@ -1,9 +1,13 @@
 package ru.bikkul.compliment.telegram.bot.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
 
 @Getter
+@Setter
 @Entity
 @ToString
 @EqualsAndHashCode
@@ -15,14 +19,18 @@ public class User {
     @Column(name = "chat_id")
     private Long id;
 
-    @Column(name = "username")
-    private String userName;
+    @Column(name = "username", nullable = false)
+    private String userName = "undefined";
 
-    @Column(name = "first_name")
-    private String firstName;
+    @Column(name = "first_name", nullable = false)
+    private String firstName = "undefined";
 
-    @Column(name = "last_name")
-    private String lastName;
+    @Column(name = "last_name", nullable = false)
+    private String lastName = "undefined";
+
+    public User(Long id) {
+        this.id = id;
+    }
 }
 
 

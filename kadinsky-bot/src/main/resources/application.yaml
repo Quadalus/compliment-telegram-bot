@@ -1,7 +1,7 @@
 kandinsky:
   api:
-    key:
-    secret:
+    key: A5E3A599F4058B1D7B432220F61E1ED9
+    secret: BF6C8DAA74B77E197FC0638B5E1CFDE2
 
     endpoint:
       url: https://api-key.fusionbrain.ai/
@@ -12,5 +12,6 @@ kandinsky:
 
     client:
       buffer_size: 5242880
+
 server:
   port: 8090

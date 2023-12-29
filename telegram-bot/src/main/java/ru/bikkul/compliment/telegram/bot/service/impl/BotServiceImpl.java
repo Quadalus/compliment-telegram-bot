@@ -22,8 +22,10 @@ import ru.bikkul.compliment.telegram.bot.client.GeneratePictureClient;
 import ru.bikkul.compliment.telegram.bot.config.BotConfig;
 import ru.bikkul.compliment.telegram.bot.exception.UserSettingsNotExistsException;
 import ru.bikkul.compliment.telegram.bot.model.GoodMorning;
+import ru.bikkul.compliment.telegram.bot.model.User;
 import ru.bikkul.compliment.telegram.bot.model.UserSettings;
 import ru.bikkul.compliment.telegram.bot.repository.GoodMorningRepository;
+import ru.bikkul.compliment.telegram.bot.repository.UserRepository;
 import ru.bikkul.compliment.telegram.bot.repository.UserSettingsRepository;
 import ru.bikkul.compliment.telegram.bot.service.BotService;
 import ru.bikkul.compliment.telegram.bot.util.enums.SourceType;
@@ -47,6 +49,7 @@ public class BotServiceImpl extends TelegramLongPollingBot implements BotService
     private final TelegramScheduler telegramScheduler;
     private final BotConfig botConfig;
     private final UserSettingsRepository userSettingsRepository;
+    private final UserRepository userRepository;
     private final GoodMorningRepository goodMorningRepository;
     private final List<BotCommand> botCommands = new ArrayList<>();
     private final Queue<String> commandCallbacks = new ArrayDeque<>();
@@ -69,11 +72,12 @@ public class BotServiceImpl extends TelegramLongPollingBot implements BotService
     }
 
     @Autowired
-    public BotServiceImpl(TelegramScheduler telegramScheduler, BotConfig botConfig, UserSettingsRepository userSettingsRepository, GoodMorningRepository goodMorningRepository, GeneratePictureClient generatePictureClient) {
+    public BotServiceImpl(TelegramScheduler telegramScheduler, BotConfig botConfig, UserSettingsRepository userSettingsRepository, UserRepository userRepository, GoodMorningRepository goodMorningRepository, GeneratePictureClient generatePictureClient) {
         super(botConfig.getBotToken());
         this.telegramScheduler = telegramScheduler;
         this.botConfig = botConfig;
         this.userSettingsRepository = userSettingsRepository;
+        this.userRepository = userRepository;
         this.goodMorningRepository = goodMorningRepository;
         this.generatePictureClient = generatePictureClient;
         fillPozdravokWishes();
@@ -244,8 +248,6 @@ public class BotServiceImpl extends TelegramLongPollingBot implements BotService
         super.onRegister();
     }
 
-    @Override
-    @Async
     public void sendRandomPicture(long chatId) {
         var url = "telegram-bot/src/main/resources/img/%d-%d.png"
                 .formatted(chatId, ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE));
@@ -260,8 +262,6 @@ public class BotServiceImpl extends TelegramLongPollingBot implements BotService
         deleteFile(url);
     }
 
-    @Async
-    @Override
     public void sendRandomPictureWithoutCaption(long chatId) {
         var url = "telegram-bot/src/main/resources/img/%d-%d.png"
                 .formatted(chatId, ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE));
@@ -273,6 +273,7 @@ public class BotServiceImpl extends TelegramLongPollingBot implements BotService
         log.info("Случайная картинка отправлена пользователю:{}", chatId);
         deleteFile(url);
     }
+
 
     private File getPicture(long chatId, String url) {
         var resutPictureDto = generatePictureClient.generatePicture(chatId);
@@ -293,7 +294,9 @@ public class BotServiceImpl extends TelegramLongPollingBot implements BotService
 
     private void startSendingWishes(Message message) {
         var chatId = message.getChatId();
+        saveStartUser(message);
         saveStartUserSettings(chatId);
+
         telegramScheduler.cronCreateJob(chatId, DEFAULT_CRON_EXPRESSION);
         log.info("start sending wishes to user id:{}", chatId);
     }
@@ -305,6 +308,19 @@ public class BotServiceImpl extends TelegramLongPollingBot implements BotService
             var userSetting = getUserSetting(chatId);
             userSetting.setIsScheduled(true);
             userSettingsRepository.saveAndFlush(userSetting);
+        }
+    }
+
+    private void saveStartUser(Message message) {
+        var chatId = message.getChatId();
+
+        if (!userRepository.existsById(chatId)) {
+            var userName = message.getChat().getUserName() == null ? "undefined" : message.getChat().getUserName();
+            var firstName = message.getChat().getFirstName() == null ? "undefined" : message.getChat().getFirstName();
+            var lastName = message.getChat().getLastName() == null ? "undefined" : message.getChat().getLastName();
+            ;
+            var user = new User(chatId, userName, firstName, lastName);
+            userRepository.saveAndFlush(user);
         }
     }
 
