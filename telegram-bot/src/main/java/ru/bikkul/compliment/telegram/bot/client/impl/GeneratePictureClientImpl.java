@@ -4,8 +4,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.util.retry.Retry;
 import ru.bikkul.compliment.telegram.bot.client.GeneratePictureClient;
 import ru.bikkul.compliment.telegram.bot.dto.ResultPictureResponseDto;
+
+import java.time.Duration;
 
 @Component
 public class GeneratePictureClientImpl implements GeneratePictureClient {
@@ -31,6 +34,7 @@ public class GeneratePictureClientImpl implements GeneratePictureClient {
                 .uri(GENERATE_PATH + chatId)
                 .retrieve()
                 .bodyToMono(ResultPictureResponseDto.class)
+                .retryWhen(Retry.fixedDelay(3, Duration.ofSeconds(30)))
                 .block();
     }
 }
