@@ -8,7 +8,7 @@ bot:
   api:
      kandinsky:
       endpoint:
-        base_url: http://localhost:8090
+        base_url: https://bikkul-kandinsky.onrender.com
         generate_path: /generate/
 
       client:
