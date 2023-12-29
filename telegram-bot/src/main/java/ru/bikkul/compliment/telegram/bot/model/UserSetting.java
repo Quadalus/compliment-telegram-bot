@@ -11,7 +11,7 @@ import ru.bikkul.compliment.telegram.bot.util.enums.SourceType;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "user_settings")
-public class UserSettings {
+public class UserSetting {
     @Id
     @Column(name = "chat_id")
     private Long chatId;
@@ -32,7 +32,7 @@ public class UserSettings {
     @Column(name = "picture_param", nullable = false)
     private String pictureParam = "default";
 
-    public UserSettings(Long chatId) {
+    public UserSetting(Long chatId) {
         this.chatId = chatId;
     }
 }
