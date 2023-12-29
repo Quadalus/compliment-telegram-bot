@@ -7,7 +7,9 @@ import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.springframework.stereotype.Component;
 
+import java.time.ZoneId;
 import java.util.Calendar;
+import java.util.TimeZone;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.JobBuilder.newJob;
@@ -28,6 +30,7 @@ public class TelegramScheduler {
     public void cronCreateJob(long chatId, String cronExpression) {
         var jobKey = "wishes-job-" + chatId;
         var triggerKey = "wishes-trigger-" + chatId;
+        TimeZone timeZone = TimeZone.getTimeZone(ZoneId.of("Europe/Moscow"));
 
         if (!scheduler.checkExists(jobKey(jobKey))) {
             var job = newJob(CronJob.class)
@@ -38,7 +41,7 @@ public class TelegramScheduler {
 
             var trigger = newTrigger()
                     .withIdentity(triggerKey)
-                    .withSchedule(cronSchedule(cronExpression))
+                    .withSchedule(cronSchedule(cronExpression).inTimeZone(timeZone))
                     .build();
             scheduler.scheduleJob(job, trigger);
             log.info("job has been scheduled with, cron:{}", cronExpression);
@@ -52,10 +55,11 @@ public class TelegramScheduler {
             return;
         }
 
+        TimeZone timeZone = TimeZone.getTimeZone(ZoneId.of("Europe/Moscow"));
         Trigger oldTrigger = scheduler.getTrigger(triggerKey("wishes-trigger-" + chatId));
         Trigger newTrigger = newTrigger()
                 .withIdentity("wishes-trigger-" + chatId)
-                .withSchedule(cronSchedule(cronExpression))
+                .withSchedule(cronSchedule(cronExpression).inTimeZone(timeZone))
                 .build();
         log.info("set new cron:{} to trigger", cronExpression);
         scheduler.rescheduleJob(oldTrigger.getKey(), newTrigger);

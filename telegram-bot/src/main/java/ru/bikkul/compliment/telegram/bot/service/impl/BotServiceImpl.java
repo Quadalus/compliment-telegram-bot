@@ -223,8 +223,7 @@ public class BotServiceImpl extends TelegramLongPollingBot implements BotService
     private void updateUserTime(long chatId, String text) {
         var userSetting = getUserSetting(chatId);
         var times = text.split(":");
-        int hourFrankfurt = Integer.parseInt(times[0]) - 3;
-        var hour = String.valueOf(hourFrankfurt);
+        var hour = times[0];
         var min = times[1];
         var newCronTime = "0 %s %s ? * * *".formatted(min, hour);
         userSetting.setCronTime(newCronTime);
