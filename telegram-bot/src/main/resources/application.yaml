@@ -8,7 +8,7 @@ bot:
   api:
      kandinsky:
       endpoint:
-        base_url: ${KANDINSKY_SERVER_HOST}
+        base_url: http://localhost:8090
         generate_path: /generate/
 
       client:
@@ -18,9 +18,9 @@ bot:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USER}
-    password: ${SPRING_DATASOURCE_PASSWORD}
+    url: jdbc:postgres://bikkul_telegram_bot_db_user:BTGcIEaUMLhZyT9plWzYj0lK51v24M8T@dpg-cm71skun7f5s73dahtd0-a/bikkul_telegram_bot_db
+    username: bikkul_telegram_bot_db_user
+    password: BTGcIEaUMLhZyT9plWzYj0lK51v24M8T
   jpa:
     hibernate:
       ddl-auto: none
