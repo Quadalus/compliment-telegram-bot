@@ -223,7 +223,8 @@ public class BotServiceImpl extends TelegramLongPollingBot implements BotService
     private void updateUserTime(long chatId, String text) {
         var userSetting = getUserSetting(chatId);
         var times = text.split(":");
-        var hour = times[0];
+        int hourFrankfurt = Integer.parseInt(times[0]) - 3;
+        var hour = String.valueOf(hourFrankfurt);
         var min = times[1];
         var newCronTime = "0 %s %s ? * * *".formatted(min, hour);
         userSetting.setCronTime(newCronTime);
@@ -318,7 +319,6 @@ public class BotServiceImpl extends TelegramLongPollingBot implements BotService
             var userName = message.getChat().getUserName() == null ? "undefined" : message.getChat().getUserName();
             var firstName = message.getChat().getFirstName() == null ? "undefined" : message.getChat().getFirstName();
             var lastName = message.getChat().getLastName() == null ? "undefined" : message.getChat().getLastName();
-            ;
             var user = new User(chatId, userName, firstName, lastName);
             userRepository.saveAndFlush(user);
         }
