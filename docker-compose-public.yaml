@@ -1,0 +1,24 @@
+version: '3.1'
+
+services:
+  kandinsky-bot:
+    build: ./kadinsky-bot
+    image: kandinsky_bot
+    container_name: kandinsky_bot
+    ports:
+      - "8090:8090"
+
+  telegram-bot:
+    build: ./telegram-bot
+    image: telegram_bot
+    container_name: telegram_bot
+    ports:
+      - "8080:8080"
+    depends_on:
+      - kandinsky-bot
+      - telegram-bot-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://***************/bikkul_telegram_bot_db
+      - SPRING_DATASOURCE_USER=*****************
+      - SPRING_DATASOURCE_PASSWORD=***************
+      - KANDINSKY_SERVER_HOST=http://kandinsky-bot:8090

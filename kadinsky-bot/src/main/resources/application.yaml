@@ -1,7 +1,7 @@
 kandinsky:
   api:
-    key: A5E3A599F4058B1D7B432220F61E1ED9
-    secret: BF6C8DAA74B77E197FC0638B5E1CFDE2
+    key: BE174AFE36AC7FC836BE6BD28FC5FE1A
+    secret: 536447964711258CD2045B73A8A8EA8A
 
     endpoint:
       url: https://api-key.fusionbrain.ai/
