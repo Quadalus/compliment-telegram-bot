@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import ru.bikkul.compliment.telegram.bot.client.GeneratePictureClient;
+import ru.bikkul.compliment.telegram.bot.util.handler.MessageHandler;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,9 +19,11 @@ import java.util.concurrent.ThreadLocalRandom;
 @Service
 public class PictureServiceImpl {
     private final GeneratePictureClient generatePictureClient;
+    private final MessageHandler messageHandler;
 
-    public PictureServiceImpl(GeneratePictureClient generatePictureClient) {
+    public PictureServiceImpl(GeneratePictureClient generatePictureClient, MessageHandler messageHandler) {
         this.generatePictureClient = generatePictureClient;
+        this.messageHandler = messageHandler;
     }
 
     private static void deleteFile(String url) {
@@ -35,12 +38,12 @@ public class PictureServiceImpl {
         var url = "telegram-bot/src/main/resources/img/%d-%d.png"
                 .formatted(chatId, ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE));
         var picture = getPicture(chatId, url);
-        var caption = getRandomWish();
+        var caption = "";//getRandomWish();
         var photo = new SendPhoto();
         photo.setChatId(chatId);
         photo.setCaption(caption);
         photo.setPhoto(new InputFile(picture));
-        sendPhoto(photo);
+        messageHandler.sendPhoto(photo);
         log.info("Пожелание с добрым утром отправлено пользователю:{}", chatId);
         deleteFile(url);
     }
@@ -52,7 +55,7 @@ public class PictureServiceImpl {
         var photo = new SendPhoto();
         photo.setChatId(chatId);
         photo.setPhoto(new InputFile(picture));
-        sendPhoto(photo);
+        messageHandler.sendPhoto(photo);
         log.info("Случайная картинка отправлена пользователю:{}", chatId);
         deleteFile(url);
     }

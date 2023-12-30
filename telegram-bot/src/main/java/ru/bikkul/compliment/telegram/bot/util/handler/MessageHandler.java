@@ -1,18 +1,18 @@
-package ru.bikkul.compliment.telegram.bot.util.sender;
+package ru.bikkul.compliment.telegram.bot.util.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.bikkul.compliment.telegram.bot.service.impl.BotService;
 
 @Slf4j
 @Component
 public class MessageHandler {
-    private final BotService botService;
-
+    public final BotService botService;
 
     public MessageHandler(BotService botService) {
         this.botService = botService;
@@ -28,7 +28,7 @@ public class MessageHandler {
         }
     }
 
-    private void sendMessage(long chatId, String textToSend) {
+    public void sendMessage(long chatId, String textToSend) {
         SendMessage msg = new SendMessage(String.valueOf(chatId), textToSend);
         try {
             botService.execute(msg);
@@ -37,7 +37,7 @@ public class MessageHandler {
         }
     }
 
-    private void sendPhoto(SendPhoto photo) {
+    public void sendPhoto(SendPhoto photo) {
         try {
             botService.execute(photo);
         } catch (TelegramApiException e) {
@@ -45,7 +45,7 @@ public class MessageHandler {
         }
     }
 
-    private void sendEditMessage(long chatId, String text, int messageId) {
+    public void sendEditMessage(long chatId, String text, int messageId) {
         var msg = new EditMessageText();
         msg.setChatId(chatId);
         msg.setText(text);
@@ -53,6 +53,27 @@ public class MessageHandler {
 
         try {
             botService.execute(msg);
+        } catch (TelegramApiException e) {
+            log.error("error from sending message, error msg:{}", e.getMessage());
+        }
+    }
+
+    public void sendMessage(SendMessage message) {
+        try {
+            botService.execute(message);
+        } catch (TelegramApiException e) {
+            log.error("error from sending message, error msg:{}", e.getMessage());
+        }
+    }
+
+    public void sendMessage(long chatId, String text, ReplyKeyboardMarkup keyboard) {
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
+        message.setText(text);
+        message.setReplyMarkup(keyboard);
+
+        try {
+            botService.execute(message);
         } catch (TelegramApiException e) {
             log.error("error from sending message, error msg:{}", e.getMessage());
         }

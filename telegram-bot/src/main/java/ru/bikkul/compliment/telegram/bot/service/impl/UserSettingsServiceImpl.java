@@ -10,7 +10,7 @@ import ru.bikkul.compliment.telegram.bot.service.UserSettingService;
 import ru.bikkul.compliment.telegram.bot.util.enums.SourceType;
 import ru.bikkul.compliment.telegram.bot.util.quartz.TelegramScheduler;
 
-import static ru.bikkul.compliment.telegram.bot.util.BotConst.DEFAULT_CRON_EXPRESSION;
+import static ru.bikkul.compliment.telegram.bot.util.common.BotConst.DEFAULT_CRON_EXPRESSION;
 
 @Slf4j
 @Service
@@ -28,7 +28,15 @@ public class UserSettingsServiceImpl implements UserSettingService {
     @Override
     @Transactional
     public UserSetting saveUserSetting(long chatId) {
-        var savedUser = userSettingsRepository.save(new UserSetting(chatId));
+        UserSetting savedUser;
+
+        if (userSettingsRepository.existsById(chatId)) {
+            var userSetting = getUserSettings(chatId);
+            userSetting.setIsScheduled(true);
+            savedUser = userSettingsRepository.save(userSetting);
+        } else {
+            savedUser = userSettingsRepository.save(new UserSetting(chatId));
+        }
         log.info("Пользовательские настройки с id:%s, были сохранены".formatted(savedUser.getChatId()));
         return savedUser;
     }
@@ -48,6 +56,19 @@ public class UserSettingsServiceImpl implements UserSettingService {
         checkUserExists(chatId);
         userSettingsRepository.deleteById(chatId);
         log.info("Пользовательские настройки с id:%s, были удалены".formatted(chatId));
+    }
+
+    @Override
+    @Transactional
+    public void setDefaultSetting(long chatId) {
+        var userSettings = getUserSettings(chatId);
+        userSettings.setIsScheduled(false);
+        userSettings.setTextParam("default");
+        userSettings.setPictureParam("default");
+        userSettings.setSourceType(SourceType.SITE);
+        userSettings.setCronTime(DEFAULT_CRON_EXPRESSION);
+        userSettingsRepository.saveAndFlush(userSettings);
+        log.info("настройки для пользователя:{}, были сброшены", chatId);
     }
 
     @Override

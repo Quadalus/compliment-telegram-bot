@@ -10,4 +10,6 @@ public interface UserSettingService {
     void deleteUserSetting(long chatId);
 
     UserSetting getUserSettings(long chatId);
+
+    void setDefaultSetting(long chatId);
 }

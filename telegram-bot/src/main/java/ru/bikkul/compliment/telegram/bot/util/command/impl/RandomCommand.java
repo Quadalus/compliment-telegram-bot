@@ -1,8 +1,12 @@
 package ru.bikkul.compliment.telegram.bot.util.command.impl;
 
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import ru.bikkul.compliment.telegram.bot.util.command.Command;
+import ru.bikkul.compliment.telegram.bot.util.handler.MessageHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,20 +14,28 @@ import java.util.List;
 import static ru.bikkul.compliment.telegram.bot.util.enums.InlineButton.PICTURE_BUTTON;
 import static ru.bikkul.compliment.telegram.bot.util.enums.InlineButton.TEXT_BUTTON;
 
-public class RandomCommand {
-    public void sendRandomReceived(long chatId) {
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
-        message.setText("Что вы хотите получить?");
+@Component
+public class RandomCommand implements Command {
+    private final MessageHandler messageHandler;
+
+    public RandomCommand(MessageHandler messageHandler) {
+        this.messageHandler = messageHandler;
+    }
+
+    @Override
+    public void receivedCommand(Message message) {
+        SendMessage receivedMessage = new SendMessage();
+        receivedMessage.setChatId(String.valueOf(receivedMessage));
+        receivedMessage.setText("Что вы хотите получить?");
 
         InlineKeyboardMarkup markupInLine = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
         var rowInLine = getInlineKeyboardButtons();
         rowsInLine.add(rowInLine);
         markupInLine.setKeyboard(rowsInLine);
-        message.setReplyMarkup(markupInLine);
+        receivedMessage.setReplyMarkup(markupInLine);
 
-        sendMessage(message);
+        messageHandler.sendMessage(receivedMessage);
     }
 
     private static List<InlineKeyboardButton> getInlineKeyboardButtons() {

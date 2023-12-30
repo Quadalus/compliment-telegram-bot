@@ -10,9 +10,9 @@ import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScope
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.bikkul.compliment.telegram.bot.client.GeneratePictureClient;
 import ru.bikkul.compliment.telegram.bot.config.BotConfig;
-import ru.bikkul.compliment.telegram.bot.util.CommandHandler;
+import ru.bikkul.compliment.telegram.bot.util.handler.CommandHandler;
 
-import static ru.bikkul.compliment.telegram.bot.util.BotConst.LIST_OF_COMMAND;
+import static ru.bikkul.compliment.telegram.bot.util.common.BotConst.LIST_OF_COMMAND;
 
 @Slf4j
 @Service

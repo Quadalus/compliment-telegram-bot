@@ -1,4 +1,4 @@
-package ru.bikkul.compliment.telegram.bot.util;
+package ru.bikkul.compliment.telegram.bot.util.common;
 
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 
@@ -37,4 +37,10 @@ public class BotConst {
             new BotCommand("/help", "Помощь."),
             new BotCommand("/stop", "Остановка приложения.")
     );
+
+    public static final String RANDOM_ROW_TEXT = "Получить случайную картинку или пожелание";
+
+    public static final String TIME_ROW_TEXT = "Установить новое время уведомленний";
+
+    public static final String STOP_ROW_TEXT = "Запустить приложение";
 }
