@@ -3,10 +3,13 @@ package ru.bikkul.compliment.telegram.bot.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import ru.bikkul.compliment.telegram.bot.exception.UserAlreadyExistsException;
 import ru.bikkul.compliment.telegram.bot.exception.UserNotExistsException;
 import ru.bikkul.compliment.telegram.bot.model.User;
 import ru.bikkul.compliment.telegram.bot.repository.UserRepository;
 import ru.bikkul.compliment.telegram.bot.service.UserService;
+import ru.bikkul.compliment.telegram.bot.util.mapper.UserMapper;
 
 @Slf4j
 @Service
@@ -20,7 +23,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User saveUser(User user) {
+    public User saveUser(Message message) {
+        var chatId = message.getChatId();
+        checkUser(chatId);
+
+        var user = UserMapper.userFromMessage(message, chatId);
         var savedUser = userRepository.save(user);
         log.info("пользователь c id:%s, сохранен.");
         return savedUser;
@@ -45,5 +52,11 @@ public class UserServiceImpl implements UserService {
     public User getUser(long chatId) {
         return userRepository.findById(chatId)
                 .orElseThrow(() -> new UserNotExistsException("Пользователь с id:%s, на найден".formatted(chatId)));
+    }
+
+    private void checkUser(Long chatId) {
+        if (userRepository.existsById(chatId)) {
+            throw new UserAlreadyExistsException("пользователь с id:%s, уже существует".formatted(chatId));
+        }
     }
 }

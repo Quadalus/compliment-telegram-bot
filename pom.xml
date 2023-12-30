@@ -22,8 +22,8 @@
     </modules>
 
     <properties>
-        <java.version>17</java.version>
-        <maven.copiler>17</maven.copiler>
+        <java.version>21</java.version>
+        <maven.copiler>21</maven.copiler>
         <telegrambots-spring-boot-starter.version>6.7.0</telegrambots-spring-boot-starter.version>
         <jsoup.version>1.15.3</jsoup.version>
         <spring.boot.version>3.2.1</spring.boot.version>
