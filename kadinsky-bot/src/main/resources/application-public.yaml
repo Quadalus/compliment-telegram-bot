@@ -1,0 +1,16 @@
+kandinsky:
+  api:
+    key:
+    secret:
+
+    endpoint:
+      url: https://api-key.fusionbrain.ai/
+      style_url: cdn.fusionbrain.ai/static/styles/api
+      status_path: /key/api/v1/text2image/status/
+      service_available_path: /key/api/v1/text2image/availability
+      generate_path: key/api/v1/text2image/run
+
+    client:
+      buffer_size: 5242880
+server:
+  port: 8090

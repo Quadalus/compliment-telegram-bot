@@ -1,0 +1,5 @@
+databaseChangeLog:
+  - include:
+      file: classpath:db/changelog/db.changelog-1.sql
+  - include:
+      file: classpath:db/changelog/db.changelog-2.sql
