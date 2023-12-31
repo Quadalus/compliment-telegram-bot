@@ -1,13 +1,11 @@
-package ru.bikkul.compliment.telegram.bot.util.handler;
+package ru.bikkul.compliment.telegram.bot.util.command.impl;
 
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.bikkul.compliment.telegram.bot.service.UserSettingService;
 import ru.bikkul.compliment.telegram.bot.util.command.Command;
-import ru.bikkul.compliment.telegram.bot.util.command.impl.RandomCommand;
-import ru.bikkul.compliment.telegram.bot.util.command.impl.StopCommand;
-import ru.bikkul.compliment.telegram.bot.util.command.impl.UnknownCommand;
-import ru.bikkul.compliment.telegram.bot.util.command.impl.UserTextCommands;
+import ru.bikkul.compliment.telegram.bot.util.common.UserTextCommands;
+import ru.bikkul.compliment.telegram.bot.util.handler.MessageHandler;
 import ru.bikkul.compliment.telegram.bot.util.quartz.TelegramScheduler;
 
 import java.util.regex.Matcher;
@@ -16,31 +14,35 @@ import java.util.regex.Pattern;
 import static ru.bikkul.compliment.telegram.bot.util.common.BotConst.*;
 
 @Component
-public class TextCommandHandler implements Command {
+public class TextCommand implements Command {
     private final MessageHandler messageHandler;
     private final UserSettingService userSettingService;
     private final TelegramScheduler telegramScheduler;
     private final UnknownCommand unknownCommand;
     private final StopCommand stopCommand;
     private final RandomCommand randomCommand;
+    private final TimeCommand timeCommand;
 
-    public TextCommandHandler(MessageHandler messageHandler, UserSettingService userSettingService, TelegramScheduler telegramScheduler, UnknownCommand unknownCommand, StopCommand stopCommand, RandomCommand randomCommand) {
+    public TextCommand(MessageHandler messageHandler, UserSettingService userSettingService, TelegramScheduler telegramScheduler, UnknownCommand unknownCommand, StopCommand stopCommand, RandomCommand randomCommand, TimeCommand timeCommand) {
         this.messageHandler = messageHandler;
         this.userSettingService = userSettingService;
         this.telegramScheduler = telegramScheduler;
         this.unknownCommand = unknownCommand;
         this.stopCommand = stopCommand;
         this.randomCommand = randomCommand;
+        this.timeCommand = timeCommand;
     }
 
     @Override
     public void receivedCommand(Message message) {
         var chatId = message.getChatId();
-        var command = UserTextCommands.peekCoomand(chatId);
+        String text = UserTextCommands.peekCoomand(chatId);
+        var command = text == null ? message.getText() : text;
         var messageText = message.getText();
 
         switch (command) {
-            case "/text", TIME_ROW_TEXT -> updateTime(chatId, messageText);
+            case "/time" -> updateTime(chatId, messageText);
+            case TIME_ROW_TEXT -> timeCommand.receivedCommand(message);
             case STOP_ROW_TEXT -> {
                 stopCommand.receivedCommand(message);
                 UserTextCommands.removeCommand(chatId);
@@ -66,7 +68,7 @@ public class TextCommandHandler implements Command {
 
     private void updateUserTime(long chatId, String text) {
         var userSetting = userSettingService.getUserSettings(chatId);
-        var times = text.split(":");
+        var times = text.split("[:,./\\\\\\- ]");
         var hour = times[0];
         var min = times[1];
         var newCronTime = "0 %s %s ? * * *".formatted(min, hour);

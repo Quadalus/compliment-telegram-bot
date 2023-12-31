@@ -33,7 +33,7 @@ public class BotConst {
             new BotCommand("/start", "Запуск приложения."),
             new BotCommand("/random", "Получить случайное пожелание на утро."),
             new BotCommand("/time", "Установить время."),
-            new BotCommand("/settings", "Получить текущие настройки."),
+            new BotCommand("/info", "Получить текущие настройки."),
             new BotCommand("/help", "Помощь."),
             new BotCommand("/stop", "Остановка приложения.")
     );

@@ -2,27 +2,39 @@ package ru.bikkul.compliment.telegram.bot.util.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import ru.bikkul.compliment.telegram.bot.service.impl.BotService;
+import ru.bikkul.compliment.telegram.bot.config.BotConfig;
 
 @Slf4j
 @Component
-public class MessageHandler {
-    public final BotService botService;
+public class MessageHandler extends TelegramLongPollingBot {
+    private final BotConfig botConfig;
 
-    public MessageHandler(BotService botService) {
-        this.botService = botService;
+    public MessageHandler(BotConfig botConfig, BotConfig botConfig1) {
+        super(botConfig.getBotToken());
+        this.botConfig = botConfig1;
+    }
+
+    @Override
+    public void onUpdateReceived(Update update) {
+    }
+
+    @Override
+    public String getBotUsername() {
+        return botConfig.getBotName();
     }
 
     public void sendMessage(long chatId) {
         String textToSend = "Извините, такой команды нет.";
         SendMessage msg = new SendMessage(String.valueOf(chatId), textToSend);
         try {
-            botService.execute(msg);
+            this.execute(msg);
         } catch (TelegramApiException e) {
             log.error("error from sending message, error msg:{}", e.getMessage());
         }
@@ -31,7 +43,7 @@ public class MessageHandler {
     public void sendMessage(long chatId, String textToSend) {
         SendMessage msg = new SendMessage(String.valueOf(chatId), textToSend);
         try {
-            botService.execute(msg);
+            this.execute(msg);
         } catch (TelegramApiException e) {
             log.error("error from sending message, error msg:{}", e.getMessage());
         }
@@ -39,7 +51,7 @@ public class MessageHandler {
 
     public void sendPhoto(SendPhoto photo) {
         try {
-            botService.execute(photo);
+            this.execute(photo);
         } catch (TelegramApiException e) {
             log.error("error from sending message, error msg:{}", e.getMessage());
         }
@@ -52,7 +64,7 @@ public class MessageHandler {
         msg.setMessageId(messageId);
 
         try {
-            botService.execute(msg);
+            this.execute(msg);
         } catch (TelegramApiException e) {
             log.error("error from sending message, error msg:{}", e.getMessage());
         }
@@ -60,7 +72,7 @@ public class MessageHandler {
 
     public void sendMessage(SendMessage message) {
         try {
-            botService.execute(message);
+            this.execute(message);
         } catch (TelegramApiException e) {
             log.error("error from sending message, error msg:{}", e.getMessage());
         }
@@ -73,7 +85,7 @@ public class MessageHandler {
         message.setReplyMarkup(keyboard);
 
         try {
-            botService.execute(message);
+            this.execute(message);
         } catch (TelegramApiException e) {
             log.error("error from sending message, error msg:{}", e.getMessage());
         }

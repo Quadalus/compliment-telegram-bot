@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import ru.bikkul.compliment.telegram.bot.client.GeneratePictureClient;
+import ru.bikkul.compliment.telegram.bot.service.PictureService;
+import ru.bikkul.compliment.telegram.bot.service.WishesService;
 import ru.bikkul.compliment.telegram.bot.util.handler.MessageHandler;
 
 import java.io.File;
@@ -17,28 +19,23 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
 @Service
-public class PictureServiceImpl {
+public class PictureServiceImpl implements PictureService {
     private final GeneratePictureClient generatePictureClient;
+    private final WishesService wishesService;
     private final MessageHandler messageHandler;
 
-    public PictureServiceImpl(GeneratePictureClient generatePictureClient, MessageHandler messageHandler) {
+    public PictureServiceImpl(GeneratePictureClient generatePictureClient, WishesService wishesService, MessageHandler messageHandler) {
         this.generatePictureClient = generatePictureClient;
+        this.wishesService = wishesService;
         this.messageHandler = messageHandler;
     }
 
-    private static void deleteFile(String url) {
-        try {
-            Files.deleteIfExists(Path.of(url));
-        } catch (IOException e) {
-            log.error("file with url:{}, not exists", url);
-        }
-    }
-
+    @Override
     public void sendRandomPicture(long chatId) {
         var url = "telegram-bot/src/main/resources/img/%d-%d.png"
                 .formatted(chatId, ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE));
         var picture = getPicture(chatId, url);
-        var caption = "";//getRandomWish();
+        var caption = wishesService.getRandomWish();
         var photo = new SendPhoto();
         photo.setChatId(chatId);
         photo.setCaption(caption);
@@ -48,6 +45,7 @@ public class PictureServiceImpl {
         deleteFile(url);
     }
 
+    @Override
     public void sendRandomPictureWithoutCaption(long chatId) {
         var url = "telegram-bot/src/main/resources/img/%d-%d.png"
                 .formatted(chatId, ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE));
@@ -75,5 +73,13 @@ public class PictureServiceImpl {
             }
         }
         return FileUtils.getFile(url);
+    }
+
+    private static void deleteFile(String url) {
+        try {
+            Files.deleteIfExists(Path.of(url));
+        } catch (IOException e) {
+            log.error("file with url:{}, not exists", url);
+        }
     }
 }

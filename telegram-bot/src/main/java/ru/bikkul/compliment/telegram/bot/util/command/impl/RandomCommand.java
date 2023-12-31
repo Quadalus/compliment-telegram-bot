@@ -24,6 +24,7 @@ public class RandomCommand implements Command {
 
     @Override
     public void receivedCommand(Message message) {
+        Long chatId = message.getChatId();
         SendMessage receivedMessage = new SendMessage();
         receivedMessage.setChatId(String.valueOf(receivedMessage));
         receivedMessage.setText("Что вы хотите получить?");
@@ -34,7 +35,7 @@ public class RandomCommand implements Command {
         rowsInLine.add(rowInLine);
         markupInLine.setKeyboard(rowsInLine);
         receivedMessage.setReplyMarkup(markupInLine);
-
+        receivedMessage.setChatId(chatId);
         messageHandler.sendMessage(receivedMessage);
     }
 

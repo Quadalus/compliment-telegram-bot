@@ -1,4 +1,4 @@
-package ru.bikkul.compliment.telegram.bot.util.command.impl;
+package ru.bikkul.compliment.telegram.bot.util.common;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

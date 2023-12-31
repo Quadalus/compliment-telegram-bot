@@ -8,9 +8,7 @@ import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import ru.bikkul.compliment.telegram.bot.client.GeneratePictureClient;
 import ru.bikkul.compliment.telegram.bot.config.BotConfig;
-import ru.bikkul.compliment.telegram.bot.util.handler.CommandHandler;
 
 import static ru.bikkul.compliment.telegram.bot.util.common.BotConst.LIST_OF_COMMAND;
 
@@ -18,11 +16,11 @@ import static ru.bikkul.compliment.telegram.bot.util.common.BotConst.LIST_OF_COM
 @Service
 public class BotService extends TelegramLongPollingBot {
     private final BotConfig botConfig;
-    private final CommandHandler commandHandler;
+    private final CommandHandlerServiceImpl commandHandler;
 
 
     @Autowired
-    public BotService(BotConfig botConfig, GeneratePictureClient generatePictureClient, CommandHandler commandHandler) {
+    public BotService(BotConfig botConfig, CommandHandlerServiceImpl commandHandler) {
         super(botConfig.getBotToken());
         this.botConfig = botConfig;
         this.commandHandler = commandHandler;
