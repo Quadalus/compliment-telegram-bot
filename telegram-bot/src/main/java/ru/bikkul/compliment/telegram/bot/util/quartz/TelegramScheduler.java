@@ -7,6 +7,8 @@ import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -22,7 +24,6 @@ import static org.quartz.TriggerKey.triggerKey;
 public class TelegramScheduler {
     private final TimeZone TIME_ZONE = TimeZone.getTimeZone(ZoneId.of("Europe/Moscow"));
     private final Scheduler scheduler;
-
 
 
     public TelegramScheduler(Scheduler scheduler) {
@@ -87,9 +88,8 @@ public class TelegramScheduler {
             var date = scheduler.getTrigger(triggerKey).getNextFireTime();
             var calendar = Calendar.getInstance();
             calendar.setTime(date);
-            var hour = calendar.get(Calendar.HOUR_OF_DAY);
-            var min = calendar.get(Calendar.MINUTE);
-            return "%s:%s".formatted(hour, min);
+            var zoneTime = LocalTime.ofInstant(Instant.from(calendar.toInstant()), ZoneId.of("Europe/Moscow"));
+            return "%s:%s".formatted(zoneTime.getHour(), zoneTime.getMinute());
         }
         return "время не установлено";
     }
