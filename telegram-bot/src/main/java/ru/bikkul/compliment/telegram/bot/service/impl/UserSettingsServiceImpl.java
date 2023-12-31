@@ -23,6 +23,7 @@ public class UserSettingsServiceImpl implements UserSettingService {
     public UserSettingsServiceImpl(UserSettingsRepository userSettingsRepository, TelegramScheduler telegramScheduler) {
         this.userSettingsRepository = userSettingsRepository;
         this.telegramScheduler = telegramScheduler;
+        onStartupCheckUserSettings();
     }
 
     @Override
@@ -81,17 +82,6 @@ public class UserSettingsServiceImpl implements UserSettingService {
         if (!userSettingsRepository.existsById(chatId)) {
             throw new UserNotExistsException("Пользовательские настройки с id:%s, не найден".formatted(chatId));
         }
-    }
-
-    private void setDefaultUserSettings(long chatId) {
-        var userSettings = getUserSettings(chatId);
-        userSettings.setIsScheduled(false);
-        userSettings.setTextParam("default");
-        userSettings.setPictureParam("default");
-        userSettings.setSourceType(SourceType.SITE);
-        userSettings.setCronTime(DEFAULT_CRON_EXPRESSION);
-        userSettingsRepository.save(userSettings);
-        log.info("настройки для пользователя:{}, были сброшены", chatId);
     }
 
     private void onStartupCheckUserSettings() {
