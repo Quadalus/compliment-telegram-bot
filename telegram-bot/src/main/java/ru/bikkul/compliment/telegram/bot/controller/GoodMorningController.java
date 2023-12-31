@@ -11,17 +11,24 @@ import ru.bikkul.compliment.telegram.bot.service.WishesParserService;
 @RequestMapping("/goodMorning")
 @RequiredArgsConstructor
 public class GoodMorningController {
-    private final WishesParserService goodMorningParser;
+    private final WishesParserService wishesParserServiceDatkiImpl;
+    private final WishesParserService wishesParserServicePozdravokImpl;
 
-    @PostMapping("/default")
+    @PostMapping("/default/pozdravok")
     @ResponseStatus(HttpStatus.CREATED)
-    public void saveWishesFromDefaultSource() {
-        goodMorningParser.saveWishesByDefaultSource();
+    public void saveWishesFromPozdravokSource() {
+        wishesParserServicePozdravokImpl.saveWishesByDefaultSource();
+    }
+
+    @PostMapping("/default/datki")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void saveWishesFromDatkiSource() {
+        wishesParserServiceDatkiImpl.saveWishesByDefaultSource();
     }
 
     @PostMapping("/user")
     @ResponseStatus(HttpStatus.CREATED)
     public GoodMorningDto saveWishesFromUserText(@RequestBody GoodMorningDto goodMorningDto) {
-        return goodMorningParser.saveWishesByUser(goodMorningDto);
+        return wishesParserServicePozdravokImpl.saveWishesByUser(goodMorningDto);
     }
 }
