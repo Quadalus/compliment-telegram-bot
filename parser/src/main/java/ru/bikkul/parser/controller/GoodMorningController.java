@@ -1,11 +1,13 @@
-package ru.bikkul.compliment.telegram.bot.controller;
+package ru.bikkul.parser.controller;
 
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-import ru.bikkul.compliment.telegram.bot.dto.GoodMorningDto;
-import ru.bikkul.compliment.telegram.bot.service.WishesParserService;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import ru.bikkul.parser.service.WishesParserService;
 
 @RestController
 @RequestMapping("/goodMorning")
@@ -24,11 +26,5 @@ public class GoodMorningController {
     @ResponseStatus(HttpStatus.CREATED)
     public void saveWishesFromDatkiSource() {
         wishesParserServiceDatkiImpl.saveWishesByDefaultSource();
-    }
-
-    @PostMapping("/user")
-    @ResponseStatus(HttpStatus.CREATED)
-    public GoodMorningDto saveWishesFromUserText(@RequestBody GoodMorningDto goodMorningDto) {
-        return wishesParserServicePozdravokImpl.saveWishesByUser(goodMorningDto);
     }
 }

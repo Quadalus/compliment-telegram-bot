@@ -19,6 +19,7 @@
     <modules>
         <module>telegram-bot</module>
         <module>kadinsky-bot</module>
+        <module>parser</module>
     </modules>
 
     <properties>

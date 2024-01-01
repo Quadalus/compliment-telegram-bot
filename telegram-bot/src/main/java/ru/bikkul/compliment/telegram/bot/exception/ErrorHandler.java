@@ -25,12 +25,12 @@ public class ErrorHandler {
         return new ApiError(HttpStatus.BAD_REQUEST, reason, msg);
     }
 
-    @ExceptionHandler(UniqueConstraintException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ApiError uniqueConstraintException(final UniqueConstraintException e) {
-        log.error("409 conflict exception reason:{}", e.getMessage(), e);
-        String reason = "For the requested operation the conditions are not met";
+    @ExceptionHandler(UserNotExistsException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError badRequestExceptionHandle(final UserNotExistsException e) {
+        log.error("404 not found exception reason:{}", e.getMessage(), e);
+        String reason = "User not found";
         String msg = e.getMessage();
-        return new ApiError(HttpStatus.CONFLICT, reason, msg);
+        return new ApiError(HttpStatus.BAD_REQUEST, reason, msg);
     }
 }

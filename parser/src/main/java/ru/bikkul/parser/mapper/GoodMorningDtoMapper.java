@@ -1,8 +1,8 @@
-package ru.bikkul.compliment.telegram.bot.util.mapper;
+package ru.bikkul.parser.mapper;
 
 import org.springframework.lang.NonNull;
-import ru.bikkul.compliment.telegram.bot.dto.GoodMorningDto;
-import ru.bikkul.compliment.telegram.bot.model.GoodMorning;
+import ru.bikkul.parser.dto.GoodMorningDto;
+import ru.bikkul.parser.model.GoodMorning;
 
 public class GoodMorningDtoMapper {
     private GoodMorningDtoMapper() {
