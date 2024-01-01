@@ -5,15 +5,15 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.bikkul.compliment.telegram.bot.util.command.Command;
 import ru.bikkul.compliment.telegram.bot.util.enums.SourceType;
 import ru.bikkul.compliment.telegram.bot.util.quartz.TelegramScheduler;
-import ru.bikkul.compliment.telegram.bot.util.handler.MessageHandler;
+import ru.bikkul.compliment.telegram.bot.util.handler.MessageSender;
 
 @Component
 public class InfoCommand implements Command {
-    private final MessageHandler messageHandler;
+    private final MessageSender messageSender;
     private final TelegramScheduler telegramScheduler;
 
-    public InfoCommand(MessageHandler messageHandler, TelegramScheduler telegramScheduler) {
-        this.messageHandler = messageHandler;
+    public InfoCommand(MessageSender messageSender, TelegramScheduler telegramScheduler) {
+        this.messageSender = messageSender;
         this.telegramScheduler = telegramScheduler;
     }
 
@@ -29,6 +29,6 @@ public class InfoCommand implements Command {
                  - Время уведомлений: %s
                  - Источник утренних желаний: %s
                 """.formatted(time, source);
-        messageHandler.sendMessage(chatId, text);
+        messageSender.sendMessage(chatId, text);
     }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 public interface GoodMorningRepository extends JpaRepository<GoodMorning, Integer> {
     @Query("""
             SELECT id
-            FROM GoodMorning 
+            FROM GoodMorning
             WHERE source LIKE 'site'
             """)
     List<Integer> findAllIdBySource(String text);

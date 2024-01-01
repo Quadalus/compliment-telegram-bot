@@ -42,5 +42,5 @@ public class BotConst {
 
     public static final String TIME_ROW_TEXT = "Установить новое время уведомленний";
 
-    public static final String STOP_ROW_TEXT = "Запустить приложение";
+    public static final String START_ROW_TEXT = "Запустить приложение";
 }

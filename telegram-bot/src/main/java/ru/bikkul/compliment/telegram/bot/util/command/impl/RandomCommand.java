@@ -6,7 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import ru.bikkul.compliment.telegram.bot.util.command.Command;
-import ru.bikkul.compliment.telegram.bot.util.handler.MessageHandler;
+import ru.bikkul.compliment.telegram.bot.util.handler.MessageSender;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +16,10 @@ import static ru.bikkul.compliment.telegram.bot.util.enums.InlineButton.TEXT_BUT
 
 @Component
 public class RandomCommand implements Command {
-    private final MessageHandler messageHandler;
+    private final MessageSender messageSender;
 
-    public RandomCommand(MessageHandler messageHandler) {
-        this.messageHandler = messageHandler;
+    public RandomCommand(MessageSender messageSender) {
+        this.messageSender = messageSender;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class RandomCommand implements Command {
         markupInLine.setKeyboard(rowsInLine);
         receivedMessage.setReplyMarkup(markupInLine);
         receivedMessage.setChatId(chatId);
-        messageHandler.sendMessage(receivedMessage);
+        messageSender.sendMessage(receivedMessage);
     }
 
     private static List<InlineKeyboardButton> getInlineKeyboardButtons() {

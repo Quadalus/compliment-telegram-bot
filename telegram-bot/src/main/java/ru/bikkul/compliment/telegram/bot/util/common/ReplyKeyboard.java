@@ -26,7 +26,7 @@ public class ReplyKeyboard {
     public static ReplyKeyboardMarkup setStopKeyboard() {
         var keyboard = new ReplyKeyboardMarkup();
         var stopRow = new KeyboardRow();
-        stopRow.add(STOP_ROW_TEXT);
+        stopRow.add(START_ROW_TEXT);
         keyboard.setKeyboard(List.of(stopRow));
         keyboard.setResizeKeyboard(true);
         return keyboard;

@@ -9,7 +9,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.bikkul.parser.exception.UniqueConstraintException;
 import ru.bikkul.parser.dto.GoodMorningDto;
 import ru.bikkul.parser.mapper.GoodMorningDtoMapper;
 import ru.bikkul.parser.model.GoodMorning;
