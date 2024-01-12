@@ -12,5 +12,6 @@
   - Docker, docekr-compose
   - Quartz
   - Sql(postgresql, liquibase)
+  - lombok
   - jsoup
   - telegrambots
