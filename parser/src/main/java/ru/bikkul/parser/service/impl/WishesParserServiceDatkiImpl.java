@@ -1,4 +1,4 @@
-package ru.bikkul.compliment.telegram.bot.service.impl;
+package ru.bikkul.parser.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,11 +9,11 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.bikkul.compliment.telegram.bot.dto.GoodMorningDto;
-import ru.bikkul.compliment.telegram.bot.model.GoodMorning;
-import ru.bikkul.compliment.telegram.bot.repository.GoodMorningRepository;
-import ru.bikkul.compliment.telegram.bot.service.WishesParserService;
-import ru.bikkul.compliment.telegram.bot.util.mapper.GoodMorningDtoMapper;
+import ru.bikkul.parser.dto.GoodMorningDto;
+import ru.bikkul.parser.mapper.GoodMorningDtoMapper;
+import ru.bikkul.parser.model.GoodMorning;
+import ru.bikkul.parser.repository.GoodMorningRepository;
+import ru.bikkul.parser.service.WishesParserService;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -25,7 +25,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class WishesParserServiceDatkiImpl implements WishesParserService {
-    private final String DEFAULT_SOURCE = "datki.com1";
+    private final String DEFAULT_SOURCE = "datki";
     private final GoodMorningRepository goodMorningRepository;
     private final List<GoodMorningDto> wishes = new ArrayList<>();
 
@@ -40,11 +40,6 @@ public class WishesParserServiceDatkiImpl implements WishesParserService {
                 .map(GoodMorningDtoMapper::fromDto)
                 .toList());
         log.info("good morning wishes has been save, wishes size:{}", goodMornings.size());
-    }
-
-    @Override
-    public GoodMorningDto saveWishesByUser(GoodMorningDto goodMorningDto) {
-        return null;
     }
 
     private void parseWishes() {

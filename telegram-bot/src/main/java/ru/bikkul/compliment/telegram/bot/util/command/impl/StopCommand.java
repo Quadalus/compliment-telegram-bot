@@ -7,17 +7,17 @@ import ru.bikkul.compliment.telegram.bot.service.UserSettingService;
 import ru.bikkul.compliment.telegram.bot.util.common.ReplyKeyboard;
 import ru.bikkul.compliment.telegram.bot.util.command.Command;
 import ru.bikkul.compliment.telegram.bot.util.quartz.TelegramScheduler;
-import ru.bikkul.compliment.telegram.bot.util.handler.MessageHandler;
+import ru.bikkul.compliment.telegram.bot.util.handler.MessageSender;
 
 @Slf4j
 @Component
 public class StopCommand implements Command {
-    private final MessageHandler messageHandler;
+    private final MessageSender messageSender;
     private final TelegramScheduler telegramScheduler;
     private final UserSettingService userSettingService;
 
-    public StopCommand(MessageHandler messageHandler, TelegramScheduler telegramScheduler, UserSettingService userSettingService) {
-        this.messageHandler = messageHandler;
+    public StopCommand(MessageSender messageSender, TelegramScheduler telegramScheduler, UserSettingService userSettingService) {
+        this.messageSender = messageSender;
         this.telegramScheduler = telegramScheduler;
         this.userSettingService = userSettingService;
     }
@@ -29,6 +29,6 @@ public class StopCommand implements Command {
         var text = "Работа бота остановлена, все настройки сброшены.";
         log.info("Работа бота для пользователя:{}, остановлена", chatId);
         userSettingService.setDefaultSetting(chatId);
-        messageHandler.sendMessage(chatId, text, ReplyKeyboard.setStopKeyboard());
+        messageSender.sendMessage(chatId, text, ReplyKeyboard.setStopKeyboard());
     }
 }

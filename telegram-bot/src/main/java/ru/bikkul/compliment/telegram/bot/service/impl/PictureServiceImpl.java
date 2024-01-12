@@ -8,7 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.InputFile;
 import ru.bikkul.compliment.telegram.bot.client.GeneratePictureClient;
 import ru.bikkul.compliment.telegram.bot.service.PictureService;
 import ru.bikkul.compliment.telegram.bot.service.WishesService;
-import ru.bikkul.compliment.telegram.bot.util.handler.MessageHandler;
+import ru.bikkul.compliment.telegram.bot.util.handler.MessageSender;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,12 +22,12 @@ import java.util.concurrent.ThreadLocalRandom;
 public class PictureServiceImpl implements PictureService {
     private final GeneratePictureClient generatePictureClient;
     private final WishesService wishesService;
-    private final MessageHandler messageHandler;
+    private final MessageSender messageSender;
 
-    public PictureServiceImpl(GeneratePictureClient generatePictureClient, WishesService wishesService, MessageHandler messageHandler) {
+    public PictureServiceImpl(GeneratePictureClient generatePictureClient, WishesService wishesService, MessageSender messageSender) {
         this.generatePictureClient = generatePictureClient;
         this.wishesService = wishesService;
-        this.messageHandler = messageHandler;
+        this.messageSender = messageSender;
     }
 
     @Override
@@ -40,7 +40,7 @@ public class PictureServiceImpl implements PictureService {
         photo.setChatId(chatId);
         photo.setCaption(caption);
         photo.setPhoto(new InputFile(picture));
-        messageHandler.sendPhoto(photo);
+        messageSender.sendPhoto(photo);
         log.info("Пожелание с добрым утром отправлено пользователю:{}", chatId);
         deleteFile(url);
     }
@@ -53,7 +53,7 @@ public class PictureServiceImpl implements PictureService {
         var photo = new SendPhoto();
         photo.setChatId(chatId);
         photo.setPhoto(new InputFile(picture));
-        messageHandler.sendPhoto(photo);
+        messageSender.sendPhoto(photo);
         log.info("Случайная картинка отправлена пользователю:{}", chatId);
         deleteFile(url);
     }

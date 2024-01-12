@@ -14,12 +14,12 @@ import static ru.bikkul.compliment.telegram.bot.util.enums.InlineButton.TEXT_BUT
 public class RandomCallbackHandler {
     private final PictureServiceImpl pictureService;
     private final WishesServiceImpl wishesService;
-    private final MessageHandler messageHandler;
+    private final MessageSender messageSender;
 
-    public RandomCallbackHandler(PictureServiceImpl pictureService, WishesServiceImpl wishesService, MessageHandler messageHandler) {
+    public RandomCallbackHandler(PictureServiceImpl pictureService, WishesServiceImpl wishesService, MessageSender messageSender) {
         this.pictureService = pictureService;
         this.wishesService = wishesService;
-        this.messageHandler = messageHandler;
+        this.messageSender = messageSender;
     }
 
     public void receivedCallback(Update update, long chatId) {
@@ -29,11 +29,11 @@ public class RandomCallbackHandler {
 
         if (callbackData.equals(TEXT_BUTTON.name())) {
             text = "Держите случайное пожелание с добрым утром:";
-            messageHandler.sendEditMessage(chatId, text, messageId);
+            messageSender.sendEditMessage(chatId, text, messageId);
             wishesService.sendRandomWish(chatId);
         } else if (callbackData.equals(PICTURE_BUTTON.name())) {
             text = "Запрос на генерацию картинки получен, ожидайте.";
-            messageHandler.sendEditMessage(chatId, text, messageId);
+            messageSender.sendEditMessage(chatId, text, messageId);
             pictureService.sendRandomPictureWithoutCaption(chatId);
         }
     }

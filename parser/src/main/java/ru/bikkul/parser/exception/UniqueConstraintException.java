@@ -1,4 +1,4 @@
-package ru.bikkul.compliment.telegram.bot.exception;
+package ru.bikkul.parser.exception;
 
 public class UniqueConstraintException extends RuntimeException{
     public UniqueConstraintException(String message) {

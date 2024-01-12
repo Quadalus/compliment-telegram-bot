@@ -1,4 +1,4 @@
-package ru.bikkul.compliment.telegram.bot.dto;
+package ru.bikkul.parser.dto;
 
 public record GoodMorningDto(String text, String source) {
 }

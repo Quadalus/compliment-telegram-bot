@@ -8,7 +8,7 @@ import ru.bikkul.compliment.telegram.bot.service.UserSettingService;
 import ru.bikkul.compliment.telegram.bot.util.common.ReplyKeyboard;
 import ru.bikkul.compliment.telegram.bot.util.command.Command;
 import ru.bikkul.compliment.telegram.bot.util.quartz.TelegramScheduler;
-import ru.bikkul.compliment.telegram.bot.util.handler.MessageHandler;
+import ru.bikkul.compliment.telegram.bot.util.handler.MessageSender;
 
 import static ru.bikkul.compliment.telegram.bot.util.common.BotConst.DEFAULT_CRON_EXPRESSION;
 import static ru.bikkul.compliment.telegram.bot.util.common.BotConst.START_MESSAGE;
@@ -16,13 +16,13 @@ import static ru.bikkul.compliment.telegram.bot.util.common.BotConst.START_MESSA
 @Slf4j
 @Component
 public class StartCommand implements Command {
-    private final MessageHandler messageHandler;
+    private final MessageSender messageSender;
     private final TelegramScheduler telegramScheduler;
     private final UserSettingService userSettingService;
     private final UserService userService;
 
-    public StartCommand(MessageHandler messageHandler, TelegramScheduler telegramScheduler, UserSettingService userSettingService, UserService userService) {
-        this.messageHandler = messageHandler;
+    public StartCommand(MessageSender messageSender, TelegramScheduler telegramScheduler, UserSettingService userSettingService, UserService userService) {
+        this.messageSender = messageSender;
         this.telegramScheduler = telegramScheduler;
         this.userSettingService = userSettingService;
         this.userService = userService;
@@ -44,7 +44,7 @@ public class StartCommand implements Command {
     }
 
     private void sendStartMessage(long chatId) {
-        messageHandler.sendMessage(chatId, START_MESSAGE, ReplyKeyboard.setReplyKeyboard());
+        messageSender.sendMessage(chatId, START_MESSAGE, ReplyKeyboard.setReplyKeyboard());
     }
 
     private void startSendingWishes(Message message) {
