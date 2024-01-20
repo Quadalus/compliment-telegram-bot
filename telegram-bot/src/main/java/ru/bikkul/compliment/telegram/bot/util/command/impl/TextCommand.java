@@ -2,6 +2,7 @@ package ru.bikkul.compliment.telegram.bot.util.command.impl;
 
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import ru.bikkul.compliment.telegram.bot.repository.UserSettingsRepository;
 import ru.bikkul.compliment.telegram.bot.service.UserSettingService;
 import ru.bikkul.compliment.telegram.bot.util.command.Command;
 import ru.bikkul.compliment.telegram.bot.util.common.UserTextCommands;
@@ -17,15 +18,17 @@ import static ru.bikkul.compliment.telegram.bot.util.common.BotConst.*;
 public class TextCommand implements Command {
     private final MessageSender messageSender;
     private final UserSettingService userSettingService;
+    private final UserSettingsRepository userSettingsRepository;
     private final TelegramScheduler telegramScheduler;
     private final Command unknownCommand;
     private final Command randomCommand;
     private final Command timeCommand;
     private final Command startCommand;
 
-    public TextCommand(MessageSender messageSender, UserSettingService userSettingService, TelegramScheduler telegramScheduler, Command unknownCommand, Command randomCommand, Command timeCommand, Command startCommand) {
+    public TextCommand(MessageSender messageSender, UserSettingService userSettingService, UserSettingsRepository userSettingsRepository, TelegramScheduler telegramScheduler, Command unknownCommand, Command randomCommand, Command timeCommand, Command startCommand) {
         this.messageSender = messageSender;
         this.userSettingService = userSettingService;
+        this.userSettingsRepository = userSettingsRepository;
         this.telegramScheduler = telegramScheduler;
         this.unknownCommand = unknownCommand;
         this.randomCommand = randomCommand;
@@ -74,6 +77,7 @@ public class TextCommand implements Command {
         var newCronTime = "0 %s %s ? * * *".formatted(min, hour);
         userSetting.setCronTime(newCronTime);
         telegramScheduler.cronUpdate(chatId, newCronTime);
+        userSettingsRepository.saveAndFlush(userSetting);
         String timeText = "Установлено новое время:" + text;
         UserTextCommands.removeCommand(chatId);
         messageSender.sendMessage(chatId, timeText);

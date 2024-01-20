@@ -42,7 +42,7 @@ public class PictureServiceImpl implements PictureService {
         photo.setPhoto(new InputFile(picture));
         messageSender.sendPhoto(photo);
         log.info("Пожелание с добрым утром отправлено пользователю:{}", chatId);
-        deleteFile(url);
+        //deleteFile(url);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class PictureServiceImpl implements PictureService {
         photo.setPhoto(new InputFile(picture));
         messageSender.sendPhoto(photo);
         log.info("Случайная картинка отправлена пользователю:{}", chatId);
-        deleteFile(url);
+//      deleteFile(url)
     }
 
     private File getPicture(long chatId, String url) {
