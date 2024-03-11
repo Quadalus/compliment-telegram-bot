@@ -15,5 +15,3 @@
   - lombok
   - jsoup
   - telegrambots
-
-#### Проверить работу приложения в тг: https://t.me/BikkulGoodMorningBot
